@@ -1,0 +1,86 @@
+[
+  {
+    "id": "frutti-di-mare",
+    "name": "Frutti di Mare",
+    "description": "Tomato sauce, mozzarella, shrimp, mussels, calamari, fresh basil, olive oil",
+    "image": "frutti-di-mare.png",
+    "badge": "",
+    "sizes": [
+      { "size": "23 cm", "price": 540 },
+      { "size": "29 cm", "price": 830 },
+      { "size": "38 cm", "price": 1200 }
+    ]
+  },
+  {
+    "id": "marine",
+    "name": "Marine",
+    "description": "White sauce, mozzarella, calamari, mussels, shrimp, cherry tomatoes, parsley",
+    "image": "marine.png",
+    "badge": "New Recipe",
+    "sizes": [
+      { "size": "23 cm", "price": 520 },
+      { "size": "29 cm", "price": 810 },
+      { "size": "38 cm", "price": 1180 }
+    ]
+  },
+  {
+    "id": "pepperoni",
+    "name": "Pepperoni",
+    "description": "Tomato sauce, mozzarella, spicy pepperoni, fresh parsley, oregano",
+    "image": "pepperoni.png",
+    "badge": "",
+    "sizes": [
+      { "size": "23 cm", "price": 420 },
+      { "size": "29 cm", "price": 680 },
+      { "size": "38 cm", "price": 990 }
+    ]
+  },
+  {
+    "id": "assorti",
+    "name": "Assorted",
+    "description": "Eight slices, eight flavors — pepperoni, ham, mushrooms, bell pepper, tomato, olives, mozzarella, basil",
+    "image": "assorti.png",
+    "badge": "Chef's Pick",
+    "sizes": [
+      { "size": "23 cm", "price": 550 },
+      { "size": "29 cm", "price": 850 },
+      { "size": "38 cm", "price": 1250 }
+    ]
+  },
+  {
+    "id": "meat-feast",
+    "name": "Meat Feast",
+    "description": "Tomato sauce, ham, salami, carbonade, beef, bacon, mozzarella, red onion, pickles, olives",
+    "image": "meat-feast.png",
+    "badge": "New Recipe",
+    "sizes": [
+      { "size": "23 cm", "price": 490 },
+      { "size": "29 cm", "price": 770 },
+      { "size": "38 cm", "price": 1200 }
+    ]
+  },
+  {
+    "id": "bavarian",
+    "name": "Bavarian",
+    "description": "Tomato sauce, chicken breast, carbonade, bavarian sausages, jalapeño, pickles, mozzarella, red onion, mustard sauce",
+    "image": "bavarian.png",
+    "badge": "",
+    "sizes": [
+      { "size": "23 cm", "price": 400 },
+      { "size": "29 cm", "price": 650 },
+      { "size": "38 cm", "price": 950 }
+    ]
+  },
+  {
+    "id": "caesar",
+    "name": "Caesar",
+    "description": "White sauce, chicken breast, mozzarella, cherry tomatoes, lettuce, quail eggs, caesar sauce, parmesan",
+    "image": "caesar.png",
+    "badge": "New Recipe",
+    "sizes": [
+      { "size": "23 cm", "price": 440 },
+      { "size": "29 cm", "price": 730 },
+      { "size": "38 cm", "price": 1050 }
+    ]
+  }
+]

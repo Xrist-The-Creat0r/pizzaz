@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pizzeria Admin</title>
+<style>
+/* ── Variables ─────────────────────────────────────────────────── */
+:root {
+  --bg: #0f0f13;
+  --surface: #1a1a22;
+  --surface2: #22222e;
+  --surface3: #2a2a38;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --accent: #D4622A;
+  --accent-hover: #e8743d;
+  --accent2: #4a7a22;
+  --green: #2D5016;
+  --beige: #C8A882;
+  --text: #e8e8f0;
+  --text2: #9999b0;
+  --text3: #66667a;
+  --danger: #c0392b;
+  --danger-hover: #e74c3c;
+  --success: #27ae60;
+  --sidebar-w: 240px;
+  --radius: 12px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+}
+
+/* ── Sidebar ───────────────────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1rem;
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  z-index: 100;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.5rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+
+.sidebar-logo-icon {
+  font-size: 1.4rem;
+}
+
+.sidebar-logo-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.05em;
+}
+
+.sidebar-logo-text small {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--text3);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: var(--text2);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  user-select: none;
+}
+
+.nav-item:hover, .nav-item.active {
+  background: var(--surface3);
+  color: var(--text);
+}
+
+.nav-item.active {
+  color: var(--accent);
+}
+
+.nav-icon { font-size: 1rem; width: 1.2rem; text-align: center; }
+
+.sidebar-footer {
+  border-top: 1px solid var(--border);
+  padding-top: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.item-count-badge {
+  font-size: 0.72rem;
+  color: var(--text3);
+  text-align: center;
+  letter-spacing: 0.06em;
+}
+
+.item-count-badge strong {
+  color: var(--beige);
+  font-size: 1rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  letter-spacing: 0.04em;
+  width: 100%;
+}
+
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-primary:hover { background: var(--accent-hover); }
+
+.btn-success {
+  background: var(--accent2);
+  color: #fff;
+}
+
+.btn-success:hover { background: #5a8c2a; }
+
+.btn-ghost {
+  background: var(--surface3);
+  color: var(--text);
+  border: 1px solid var(--border2);
+}
+
+.btn-ghost:hover { background: var(--surface2); border-color: var(--border2); }
+
+/* Save status */
+.save-status {
+  font-size: 0.72rem;
+  text-align: center;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.save-status.unsaved {
+  opacity: 1;
+  background: rgba(212, 98, 42, 0.15);
+  color: var(--accent);
+  border: 1px solid rgba(212, 98, 42, 0.3);
+}
+
+.save-status.saved {
+  opacity: 1;
+  background: rgba(39, 174, 96, 0.12);
+  color: var(--success);
+  border: 1px solid rgba(39, 174, 96, 0.25);
+}
+
+/* ── Main ──────────────────────────────────────────────────────── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+.main-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.main-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.main-title small {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text3);
+  font-weight: 400;
+  margin-top: 0.2rem;
+}
+
+/* ── Card Grid ─────────────────────────────────────────────────── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  min-height: 200px;
+}
+
+@media (max-width: 1200px) { .card-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 800px) {
+  .card-grid { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+}
+
+/* ── Pizza Card (admin) ────────────────────────────────────────── */
+.pizza-admin-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: relative;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  animation: cardIn 0.4s var(--ease) both;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+.pizza-admin-card:hover {
+  border-color: var(--border2);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+/* Drag states */
+.pizza-admin-card.dragging {
+  opacity: 0.5;
+  transform: scale(1.04);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  z-index: 10;
+}
+
+.pizza-admin-card.drag-over {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* Card top bar */
+.card-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.6rem;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+}
+
+.drag-handle {
+  cursor: grab;
+  color: var(--text3);
+  font-size: 1rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+  user-select: none;
+  letter-spacing: 2px;
+}
+
+.drag-handle:hover {
+  color: var(--text2);
+  background: var(--surface3);
+}
+
+.drag-handle:active { cursor: grabbing; }
+
+.card-actions {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.btn-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-icon:hover {
+  background: var(--surface3);
+  color: var(--text);
+}
+
+.btn-icon.danger:hover {
+  background: rgba(192, 57, 43, 0.2);
+  color: var(--danger-hover);
+}
+
+/* Card image */
+.card-image-area {
+  position: relative;
+  height: 180px;
+  background: var(--surface2);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.card-image-area img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.card-image-area:hover img { transform: scale(1.05); }
+
+.card-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  color: #fff;
+  font-size: 0.8rem;
+  gap: 0.3rem;
+}
+
+.card-image-overlay span:first-child { font-size: 1.6rem; }
+
+.card-image-area:hover .card-image-overlay { opacity: 1; }
+
+.card-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text3);
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.card-image-placeholder span:first-child { font-size: 2.5rem; opacity: 0.4; }
+
+.card-image-input { display: none; }
+
+/* Card body */
+.card-body {
+  padding: 1rem;
+}
+
+.card-badge-wrap {
+  margin-bottom: 0.6rem;
+}
+
+.badge-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  color: var(--text3);
+  cursor: pointer;
+  user-select: none;
+}
+
+.badge-input {
+  background: rgba(74, 122, 34, 0.15);
+  border: 1px dashed rgba(74, 122, 34, 0.4);
+  border-radius: 999px;
+  padding: 0.2em 0.7em;
+  font-size: 0.68rem;
+  color: #8dc85a;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  width: 120px;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.badge-input:focus {
+  border-color: var(--accent2);
+  background: rgba(74, 122, 34, 0.25);
+}
+
+.card-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  outline: none;
+  border-bottom: 1px dashed transparent;
+  padding-bottom: 2px;
+  margin-bottom: 0.5rem;
+  transition: border-color 0.15s;
+  min-height: 1.5em;
+}
+
+.card-name:focus, .card-name:hover {
+  border-color: var(--border2);
+}
+
+.card-name:focus { border-color: var(--accent); }
+
+.card-desc {
+  font-size: 0.78rem;
+  color: var(--text2);
+  line-height: 1.55;
+  outline: none;
+  border: 1px dashed transparent;
+  border-radius: 4px;
+  padding: 0.3rem;
+  margin-bottom: 0.8rem;
+  transition: border-color 0.15s, background 0.15s;
+  min-height: 3em;
+}
+
+.card-desc:focus, .card-desc:hover {
+  border-color: var(--border2);
+  background: var(--surface2);
+}
+
+.card-desc:focus { border-color: var(--accent); }
+
+/* Sizes */
+.sizes-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 0.5rem;
+}
+
+.sizes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.size-row-admin {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.size-input, .price-input {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.78rem;
+  padding: 0.35rem 0.5rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.size-input { width: 70px; }
+.price-input { flex: 1; }
+
+.size-input:focus, .price-input:focus {
+  border-color: var(--accent);
+}
+
+.size-sep {
+  color: var(--text3);
+  font-size: 0.8rem;
+}
+
+.btn-remove-size {
+  background: transparent;
+  border: none;
+  color: var(--text3);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0.2rem;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.btn-remove-size:hover {
+  color: var(--danger-hover);
+  background: rgba(192,57,43,0.15);
+}
+
+.btn-add-size {
+  background: transparent;
+  border: 1px dashed var(--border2);
+  border-radius: 6px;
+  color: var(--text3);
+  font-size: 0.75rem;
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+  width: 100%;
+  transition: color 0.15s, border-color 0.15s;
+  margin-top: 0.2rem;
+}
+
+.btn-add-size:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+/* Skeleton */
+.skeleton-admin {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.skel-img { height: 180px; background: var(--surface2); }
+.skel-body { padding: 1rem; }
+.skel-line {
+  height: 12px;
+  background: var(--surface3);
+  border-radius: 4px;
+  margin-bottom: 0.6rem;
+}
+
+/* ── Modal ─────────────────────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.modal-backdrop.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 1.8rem;
+  transform: translateY(30px) scale(0.97);
+  transition: transform 0.25s var(--ease);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+}
+
+.modal-backdrop.open .modal {
+  transform: none;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.modal-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.modal-close {
+  background: var(--surface3);
+  border: none;
+  color: var(--text2);
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.modal-close:hover { background: var(--surface2); color: var(--text); }
+
+.field-group { margin-bottom: 1.1rem; }
+
+.field-label {
+  display: block;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 0.4rem;
+}
+
+.field-input, .field-textarea {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 0.88rem;
+  padding: 0.6rem 0.8rem;
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+.field-input:focus, .field-textarea:focus {
+  border-color: var(--accent);
+}
+
+.field-textarea { resize: vertical; min-height: 80px; }
+
+.modal-image-preview {
+  width: 100%;
+  height: 140px;
+  background: var(--surface2);
+  border: 2px dashed var(--border2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.2s;
+  margin-bottom: 0.4rem;
+  position: relative;
+}
+
+.modal-image-preview:hover { border-color: var(--accent); }
+
+.modal-image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-image-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--text3);
+  font-size: 0.8rem;
+  pointer-events: none;
+}
+
+.modal-sizes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 0.7rem;
+  margin-top: 1.5rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--border);
+}
+
+.modal-footer .btn { flex: 1; }
+
+/* Error state */
+.field-error {
+  font-size: 0.7rem;
+  color: var(--danger-hover);
+  margin-top: 0.3rem;
+  display: none;
+}
+
+.has-error .field-input,
+.has-error .field-textarea { border-color: var(--danger); }
+
+.has-error .field-error { display: block; }
+
+/* Confirm dialog */
+.confirm-dialog {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.confirm-dialog.open { opacity: 1; pointer-events: all; }
+
+.confirm-box {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 320px;
+  width: 90%;
+  transform: scale(0.95);
+  transition: transform 0.2s var(--ease);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+}
+
+.confirm-dialog.open .confirm-box { transform: scale(1); }
+
+.confirm-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.confirm-text {
+  font-size: 0.82rem;
+  color: var(--text2);
+  margin-bottom: 1.2rem;
+  line-height: 1.5;
+}
+
+.confirm-actions { display: flex; gap: 0.6rem; }
+.confirm-actions .btn { flex: 1; padding: 0.5rem; font-size: 0.82rem; }
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+.btn-danger:hover { background: var(--danger-hover); }
+
+/* ── Toast ─────────────────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  z-index: 3000;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.3s var(--ease);
+  pointer-events: none;
+}
+
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast.success { background: var(--success); color: #fff; }
+.toast.error { background: var(--danger); color: #fff; }
+</style>
+</head>
+<body>
+
+<!-- ── Sidebar ───────────────────────────────────────────────────── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <span class="sidebar-logo-icon">🍕</span>
+    <div class="sidebar-logo-text">
+      Pizzeria
+      <small>Admin Panel</small>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-item active">
+      <span class="nav-icon">🍕</span> Menu Items
+    </div>
+    <a href="/menu" target="_blank" class="nav-item" style="text-decoration:none;color:inherit">
+      <span class="nav-icon">👁</span> Preview Menu
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="item-count-badge">
+      <strong id="item-count">0</strong> pizzas on menu
+    </div>
+    <div class="save-status" id="save-status"></div>
+    <button class="btn btn-primary" id="btn-add">+ Add New Pizza</button>
+    <button class="btn btn-success" id="btn-save">💾 Save Changes</button>
+  </div>
+</aside>
+
+<!-- ── Main ──────────────────────────────────────────────────────── -->
+<main class="main">
+  <div class="main-header">
+    <div class="main-title">
+      Menu Items
+      <small>Drag to reorder · Click fields to edit</small>
+    </div>
+  </div>
+
+  <div class="card-grid" id="card-grid">
+    <!-- Skeleton placeholders -->
+    <div class="skeleton-admin"><div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:60%"></div><div class="skel-line" style="width:90%"></div><div class="skel-line" style="width:75%"></div></div></div>
+    <div class="skeleton-admin"><div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:55%"></div><div class="skel-line" style="width:85%"></div><div class="skel-line" style="width:70%"></div></div></div>
+    <div class="skeleton-admin"><div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:65%"></div><div class="skel-line" style="width:80%"></div><div class="skel-line" style="width:60%"></div></div></div>
+  </div>
+</main>
+
+<!-- ── Add Pizza Modal ────────────────────────────────────────────── -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Add New Pizza</h2>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+
+    <div class="field-group" id="fg-name">
+      <label class="field-label">Pizza Name *</label>
+      <input class="field-input" id="m-name" placeholder="e.g. Margherita" type="text">
+      <div class="field-error">Name is required</div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Description</label>
+      <textarea class="field-textarea" id="m-desc" placeholder="Sauce, toppings, cheese..."></textarea>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Badge (optional)</label>
+      <input class="field-input" id="m-badge" placeholder="e.g. New Recipe, Chef's Pick" type="text">
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Image</label>
+      <div class="modal-image-preview" id="modal-img-preview">
+        <div class="modal-image-hint">
+          <span>📷</span>
+          <span>Click to upload image</span>
+        </div>
+      </div>
+      <input type="file" id="m-image" accept="image/*" style="display:none">
+    </div>
+
+    <div class="field-group" id="fg-sizes">
+      <label class="field-label">Sizes & Prices *</label>
+      <div class="modal-sizes-list" id="m-sizes-list"></div>
+      <button class="btn-add-size" id="m-add-size">+ Add size</button>
+      <div class="field-error" id="sizes-error">At least one size with price is required</div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="modal-cancel">Cancel</button>
+      <button class="btn btn-primary" id="modal-confirm">Add Pizza</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Confirm Delete Dialog ──────────────────────────────────────── -->
+<div class="confirm-dialog" id="confirm-dialog">
+  <div class="confirm-box">
+    <div class="confirm-title">Delete Pizza?</div>
+    <div class="confirm-text" id="confirm-text">This action cannot be undone.</div>
+    <div class="confirm-actions">
+      <button class="btn btn-ghost" id="confirm-cancel">Cancel</button>
+      <button class="btn btn-danger" id="confirm-ok">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast ──────────────────────────────────────────────────────── -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── State ─────────────────────────────────────────────────────── */
+let menu = [];
+let isDirty = false;
+let dragSrcIndex = null;
+let pendingDeleteIndex = null;
+let modalImageFile = null;
+let modalImageFilename = null;
+
+/* ── DOM refs ──────────────────────────────────────────────────── */
+const grid = document.getElementById('card-grid');
+const saveStatus = document.getElementById('save-status');
+const itemCount = document.getElementById('item-count');
+const btnAdd = document.getElementById('btn-add');
+const btnSave = document.getElementById('btn-save');
+
+/* ── Utilities ─────────────────────────────────────────────────── */
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.className = 'toast', 2800);
+}
+
+function markDirty() {
+  isDirty = true;
+  saveStatus.textContent = '● Unsaved changes';
+  saveStatus.className = 'save-status unsaved';
+}
+
+function markSaved() {
+  isDirty = false;
+  saveStatus.textContent = '✓ Saved';
+  saveStatus.className = 'save-status saved';
+  setTimeout(() => {
+    if (!isDirty) {
+      saveStatus.className = 'save-status';
+    }
+  }, 3000);
+}
+
+function generateId(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now();
+}
+
+function getImageUrl(filename) {
+  return filename ? `/shared/images/${filename}` : null;
+}
+
+/* ── Render ────────────────────────────────────────────────────── */
+function renderGrid() {
+  grid.innerHTML = '';
+  itemCount.textContent = menu.length;
+
+  menu.forEach((pizza, index) => {
+    const card = createCard(pizza, index);
+    grid.appendChild(card);
+  });
+}
+
+function createCard(pizza, index) {
+  const card = document.createElement('div');
+  card.className = 'pizza-admin-card';
+  card.dataset.index = index;
+  card.draggable = true;
+
+  const imgUrl = getImageUrl(pizza.image);
+  const imgHtml = imgUrl
+    ? `<img src="${imgUrl}" alt="${pizza.name}" onerror="this.parentElement.innerHTML='<div class=\\'card-image-placeholder\\'><span>🍕</span><span>No image</span></div>'">`
+    : `<div class="card-image-placeholder"><span>🍕</span><span>Click to upload</span></div>`;
+
+  const sizesHtml = (pizza.sizes || []).map((s, si) => `
+    <div class="size-row-admin" data-size-index="${si}">
+      <input class="size-input" value="${s.size}" placeholder="23cm" data-field="size" data-size-index="${si}">
+      <span class="size-sep">→</span>
+      <input class="price-input" value="${s.price}" placeholder="Price" type="number" min="0" data-field="price" data-size-index="${si}">
+      <button class="btn-remove-size" data-size-index="${si}" title="Remove size">✕</button>
+    </div>
+  `).join('');
+
+  card.innerHTML = `
+    <div class="card-topbar">
+      <span class="drag-handle" title="Drag to reorder">⠿⠿</span>
+      <div class="card-actions">
+        <button class="btn-icon danger btn-delete" title="Delete pizza">🗑</button>
+      </div>
+    </div>
+    <div class="card-image-area">
+      ${imgHtml}
+      <div class="card-image-overlay">
+        <span>📷</span>
+        <span>Change image</span>
+      </div>
+      <input type="file" class="card-image-input" accept="image/*">
+    </div>
+    <div class="card-body">
+      <div class="card-badge-wrap">
+        <label class="badge-toggle">
+          <span>Badge:</span>
+          <input class="badge-input" type="text" value="${pizza.badge || ''}" placeholder="e.g. New Recipe">
+        </label>
+      </div>
+      <div class="card-name" contenteditable="true" spellcheck="false">${pizza.name}</div>
+      <div class="card-desc" contenteditable="true" spellcheck="false">${pizza.description}</div>
+      <div class="sizes-label">Sizes & Prices</div>
+      <div class="sizes-list">${sizesHtml}</div>
+      <button class="btn-add-size">+ Add size</button>
+    </div>
+  `;
+
+  bindCardEvents(card, index);
+  return card;
+}
+
+function bindCardEvents(card, index) {
+  // Image upload
+  const imgArea = card.querySelector('.card-image-area');
+  const imgInput = card.querySelector('.card-image-input');
+  imgArea.addEventListener('click', () => imgInput.click());
+  imgInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const idx = parseInt(card.dataset.index);
+    const filename = await uploadImage(file);
+    if (filename) {
+      menu[idx].image = filename;
+      const imgEl = card.querySelector('.card-image-area');
+      imgEl.querySelector('img, .card-image-placeholder').remove();
+      const img = document.createElement('img');
+      img.src = getImageUrl(filename);
+      img.alt = menu[idx].name;
+      imgEl.insertBefore(img, imgEl.querySelector('.card-image-overlay'));
+      markDirty();
+    }
+  });
+
+  // Name
+  const nameEl = card.querySelector('.card-name');
+  nameEl.addEventListener('input', () => {
+    const idx = parseInt(card.dataset.index);
+    menu[idx].name = nameEl.textContent.trim();
+    markDirty();
+  });
+
+  // Description
+  const descEl = card.querySelector('.card-desc');
+  descEl.addEventListener('input', () => {
+    const idx = parseInt(card.dataset.index);
+    menu[idx].description = descEl.textContent.trim();
+    markDirty();
+  });
+
+  // Badge
+  const badgeInput = card.querySelector('.badge-input');
+  badgeInput.addEventListener('input', () => {
+    const idx = parseInt(card.dataset.index);
+    menu[idx].badge = badgeInput.value;
+    markDirty();
+  });
+
+  // Size inputs
+  card.addEventListener('input', (e) => {
+    if (!e.target.dataset.field) return;
+    const idx = parseInt(card.dataset.index);
+    const si = parseInt(e.target.dataset.sizeIndex);
+    const field = e.target.dataset.field;
+    if (field === 'price') {
+      menu[idx].sizes[si].price = parseFloat(e.target.value) || 0;
+    } else {
+      menu[idx].sizes[si].size = e.target.value;
+    }
+    markDirty();
+  });
+
+  // Remove size
+  card.addEventListener('click', (e) => {
+    if (e.target.classList.contains('btn-remove-size')) {
+      const idx = parseInt(card.dataset.index);
+      const si = parseInt(e.target.dataset.sizeIndex);
+      menu[idx].sizes.splice(si, 1);
+      rebuildSizesList(card, idx);
+      markDirty();
+    }
+  });
+
+  // Add size
+  card.querySelector('.btn-add-size').addEventListener('click', () => {
+    const idx = parseInt(card.dataset.index);
+    menu[idx].sizes.push({ size: '', price: 0 });
+    rebuildSizesList(card, idx);
+    markDirty();
+  });
+
+  // Delete
+  card.querySelector('.btn-delete').addEventListener('click', () => {
+    const idx = parseInt(card.dataset.index);
+    pendingDeleteIndex = idx;
+    document.getElementById('confirm-text').textContent =
+      `Delete "${menu[idx].name}"? This cannot be undone.`;
+    document.getElementById('confirm-dialog').classList.add('open');
+  });
+
+  // Drag events
+  card.addEventListener('dragstart', (e) => {
+    dragSrcIndex = parseInt(card.dataset.index);
+    card.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', dragSrcIndex);
+  });
+
+  card.addEventListener('dragend', () => {
+    card.classList.remove('dragging');
+    document.querySelectorAll('.pizza-admin-card').forEach(c => c.classList.remove('drag-over'));
+  });
+
+  card.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    document.querySelectorAll('.pizza-admin-card').forEach(c => c.classList.remove('drag-over'));
+    if (parseInt(card.dataset.index) !== dragSrcIndex) {
+      card.classList.add('drag-over');
+    }
+  });
+
+  card.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const targetIndex = parseInt(card.dataset.index);
+    if (dragSrcIndex === null || dragSrcIndex === targetIndex) return;
+
+    const moved = menu.splice(dragSrcIndex, 1)[0];
+    menu.splice(targetIndex, 0, moved);
+    dragSrcIndex = null;
+    renderGrid();
+    markDirty();
+  });
+}
+
+function rebuildSizesList(card, index) {
+  const list = card.querySelector('.sizes-list');
+  list.innerHTML = menu[index].sizes.map((s, si) => `
+    <div class="size-row-admin" data-size-index="${si}">
+      <input class="size-input" value="${s.size}" placeholder="23cm" data-field="size" data-size-index="${si}">
+      <span class="size-sep">→</span>
+      <input class="price-input" value="${s.price}" placeholder="Price" type="number" min="0" data-field="price" data-size-index="${si}">
+      <button class="btn-remove-size" data-size-index="${si}" title="Remove size">✕</button>
+    </div>
+  `).join('');
+}
+
+/* ── Image Upload ──────────────────────────────────────────────── */
+async function uploadImage(file) {
+  try {
+    const fd = new FormData();
+    fd.append('image', file);
+    const res = await fetch('/api/upload', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (data.filename) return data.filename;
+    showToast('Upload failed', 'error');
+    return null;
+  } catch {
+    showToast('Upload failed', 'error');
+    return null;
+  }
+}
+
+/* ── Save ──────────────────────────────────────────────────────── */
+btnSave.addEventListener('click', async () => {
+  btnSave.textContent = 'Saving…';
+  btnSave.disabled = true;
+  try {
+    const res = await fetch('/api/menu', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(menu)
+    });
+    const data = await res.json();
+    if (data.ok) {
+      markSaved();
+      showToast('Menu saved successfully ✓');
+    } else {
+      throw new Error('Server error');
+    }
+  } catch {
+    showToast('Save failed — is the server running?', 'error');
+  } finally {
+    btnSave.textContent = '💾 Save Changes';
+    btnSave.disabled = false;
+  }
+});
+
+/* ── Confirm Delete ────────────────────────────────────────────── */
+document.getElementById('confirm-cancel').addEventListener('click', () => {
+  document.getElementById('confirm-dialog').classList.remove('open');
+  pendingDeleteIndex = null;
+});
+
+document.getElementById('confirm-ok').addEventListener('click', () => {
+  if (pendingDeleteIndex !== null) {
+    menu.splice(pendingDeleteIndex, 1);
+    renderGrid();
+    markDirty();
+    showToast('Pizza removed');
+  }
+  document.getElementById('confirm-dialog').classList.remove('open');
+  pendingDeleteIndex = null;
+});
+
+/* ── Add Pizza Modal ───────────────────────────────────────────── */
+btnAdd.addEventListener('click', openModal);
+
+function openModal() {
+  modalImageFile = null;
+  modalImageFilename = null;
+  document.getElementById('m-name').value = '';
+  document.getElementById('m-desc').value = '';
+  document.getElementById('m-badge').value = '';
+  document.getElementById('m-image').value = '';
+
+  const preview = document.getElementById('modal-img-preview');
+  preview.innerHTML = `<div class="modal-image-hint"><span>📷</span><span>Click to upload image</span></div>`;
+
+  const sizesList = document.getElementById('m-sizes-list');
+  sizesList.innerHTML = '';
+  addModalSizeRow();
+
+  document.getElementById('fg-name').classList.remove('has-error');
+  document.getElementById('fg-sizes').classList.remove('has-error');
+  document.getElementById('modal-backdrop').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-backdrop').classList.remove('open');
+}
+
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('modal-cancel').addEventListener('click', closeModal);
+document.getElementById('modal-backdrop').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modal-backdrop')) closeModal();
+});
+
+// Modal image upload
+document.getElementById('modal-img-preview').addEventListener('click', () => {
+  document.getElementById('m-image').click();
+});
+
+document.getElementById('m-image').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  modalImageFile = file;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const preview = document.getElementById('modal-img-preview');
+    preview.innerHTML = `<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+  };
+  reader.readAsDataURL(file);
+});
+
+function addModalSizeRow(size = '', price = '') {
+  const list = document.getElementById('m-sizes-list');
+  const row = document.createElement('div');
+  row.className = 'size-row-admin';
+  row.innerHTML = `
+    <input class="size-input m-size" value="${size}" placeholder="23cm">
+    <span class="size-sep">→</span>
+    <input class="price-input m-price" value="${price}" placeholder="Price" type="number" min="0">
+    <button class="btn-remove-size m-remove-size" type="button">✕</button>
+  `;
+  row.querySelector('.m-remove-size').addEventListener('click', () => {
+    row.remove();
+  });
+  list.appendChild(row);
+}
+
+document.getElementById('m-add-size').addEventListener('click', () => addModalSizeRow());
+
+document.getElementById('modal-confirm').addEventListener('click', async () => {
+  const name = document.getElementById('m-name').value.trim();
+  const desc = document.getElementById('m-desc').value.trim();
+  const badge = document.getElementById('m-badge').value.trim();
+
+  const sizeRows = document.querySelectorAll('#m-sizes-list .size-row-admin');
+  const sizes = [];
+  sizeRows.forEach(row => {
+    const s = row.querySelector('.m-size').value.trim();
+    const p = parseFloat(row.querySelector('.m-price').value);
+    if (s && !isNaN(p)) sizes.push({ size: s, price: p });
+  });
+
+  let valid = true;
+  document.getElementById('fg-name').classList.remove('has-error');
+  document.getElementById('fg-sizes').classList.remove('has-error');
+
+  if (!name) {
+    document.getElementById('fg-name').classList.add('has-error');
+    valid = false;
+  }
+  if (!sizes.length) {
+    document.getElementById('fg-sizes').classList.add('has-error');
+    valid = false;
+  }
+  if (!valid) return;
+
+  const btn = document.getElementById('modal-confirm');
+  btn.textContent = 'Adding…';
+  btn.disabled = true;
+
+  let imageFilename = '';
+  if (modalImageFile) {
+    imageFilename = await uploadImage(modalImageFile) || '';
+  }
+
+  const newPizza = {
+    id: generateId(name),
+    name,
+    description: desc,
+    image: imageFilename,
+    badge,
+    sizes
+  };
+
+  menu.push(newPizza);
+  renderGrid();
+  markDirty();
+  closeModal();
+  showToast(`"${name}" added to menu`);
+
+  btn.textContent = 'Add Pizza';
+  btn.disabled = false;
+});
+
+/* ── Load menu ─────────────────────────────────────────────────── */
+async function loadMenu() {
+  try {
+    const res = await fetch('/api/menu');
+    menu = await res.json();
+    renderGrid();
+  } catch (err) {
+    grid.innerHTML = '<p style="padding:2rem;color:#666;">Failed to load menu. Is the server running?</p>';
+    console.error(err);
+  }
+}
+
+loadMenu();
+</script>
+</body>
+</html>

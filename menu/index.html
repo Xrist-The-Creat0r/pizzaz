@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pizza Lkhorzza · Menu</title>
+<style>
+/* ── Custom properties ─────────────────────────────────────────── */
+:root {
+  --green:        #5a7034;
+  --green-mid:    #4a6028;
+  --green-deep:   #3a4d1f;
+  --green-shadow: #2d3f1a;
+  --beige:        #d9c4a3;
+  --beige-light:  #e8d6b8;
+  --beige-warm:   #c9a982;
+  --beige-shadow: #b89770;
+  --accent:       #c8531f;
+  --accent-soft:  #d9682d;
+  --cream:        #f5ecd6;
+  --text-cream:   #f3e9d2;
+  --text-warm:    #4a3a26;
+  --text-dim:     rgba(74, 58, 38, 0.65);
+  --badge-fill:   rgba(180, 200, 130, 0.25);
+  --badge-edge:   rgba(120, 150, 80, 0.5);
+  --badge-text:   #5a7028;
+  --font-serif:   'Playfair Display', 'Georgia', 'Times New Roman', serif;
+  --font-sans:    'Helvetica Neue', 'Inter', Arial, sans-serif;
+  --ease-out:     cubic-bezier(0.2, 0.85, 0.3, 1);
+  --ease-soft:    cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--green);
+  color: var(--text-warm);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Subtle paper noise texture overlay applied globally */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.18 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  mix-blend-mode: multiply;
+}
+
+/* ─────────────────────────────────────────────────────────────── */
+/* HERO                                                             */
+/* ─────────────────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  background: var(--green-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  color: var(--cream);
+  isolation: isolate;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 40%, rgba(200, 83, 31, 0.18), transparent 50%),
+    radial-gradient(ellipse at 70% 70%, rgba(217, 196, 163, 0.12), transparent 60%);
+  z-index: 0;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 3;
+  padding: 2rem;
+}
+
+.hero-eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--beige);
+  margin-bottom: 1.2rem;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: heroFadeUp 1s var(--ease-out) 0.2s forwards;
+}
+
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 11vw, 8rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  color: var(--cream);
+  opacity: 0;
+  transform: translateY(30px);
+  animation: heroFadeUp 1.1s var(--ease-out) 0.4s forwards;
+}
+
+.hero-title em {
+  font-style: italic;
+  color: var(--beige);
+}
+
+.hero-rule {
+  width: 60px;
+  height: 1px;
+  background: var(--beige);
+  margin: 1.6rem auto 1.4rem;
+  opacity: 0;
+  animation: heroFadeUp 1s var(--ease-out) 0.6s forwards;
+}
+
+.hero-sub {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--beige);
+  letter-spacing: 0.08em;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: heroFadeUp 1s var(--ease-out) 0.75s forwards;
+}
+
+.hero-tagline {
+  font-size: 0.72rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(245, 236, 214, 0.55);
+  margin-top: 1rem;
+  opacity: 0;
+  animation: heroFadeUp 1s var(--ease-out) 0.9s forwards;
+}
+
+@keyframes heroFadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-scroll {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  opacity: 0;
+  animation: heroFadeUp 1s var(--ease-out) 1.3s forwards;
+}
+
+.hero-scroll span {
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(245, 236, 214, 0.55);
+}
+
+.scroll-line {
+  width: 1px;
+  height: 50px;
+  background: linear-gradient(to bottom, rgba(245, 236, 214, 0.6), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+  transform-origin: top;
+}
+
+@keyframes scrollPulse {
+  0%, 100% { transform: scaleY(0.3); opacity: 0.3; }
+  50%      { transform: scaleY(1);   opacity: 1; }
+}
+
+/* Hero decorative svgs */
+.hero-decor {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+.hero-decor.r1 { top: 8%;  left: 5%;  width: 130px; transform: rotate(-25deg); animation: floatA 7s ease-in-out infinite; }
+.hero-decor.r2 { bottom: 12%; right: 7%; width: 110px; transform: rotate(35deg) scaleX(-1); animation: floatB 8s ease-in-out infinite; }
+.hero-decor.r3 { top: 20%; right: 12%; width: 70px; transform: rotate(10deg); opacity: 0.55; animation: floatA 6s ease-in-out 0.5s infinite; }
+
+@keyframes floatA {
+  0%,100% { transform: rotate(-25deg) translateY(0); }
+  50%     { transform: rotate(-25deg) translateY(-10px); }
+}
+@keyframes floatB {
+  0%,100% { transform: rotate(35deg) scaleX(-1) translateY(0); }
+  50%     { transform: rotate(35deg) scaleX(-1) translateY(-12px); }
+}
+
+/* ─────────────────────────────────────────────────────────────── */
+/* MENU                                                             */
+/* ─────────────────────────────────────────────────────────────── */
+#menu-container {
+  position: relative;
+  z-index: 2;
+}
+
+/* Pizza row — the "poster page" */
+.pizza-row {
+  position: relative;
+  min-height: 92vh;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Split background using two stacked layers + diagonal clip */
+.pizza-row__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.pizza-row__bg .layer-green,
+.pizza-row__bg .layer-beige {
+  position: absolute;
+  inset: 0;
+}
+
+.pizza-row__bg .layer-green {
+  background:
+    radial-gradient(ellipse at 30% 50%, var(--green) 0%, var(--green-mid) 60%, var(--green-deep) 100%);
+}
+
+.pizza-row__bg .layer-beige {
+  background:
+    radial-gradient(ellipse at 70% 50%, var(--beige-light) 0%, var(--beige) 55%, var(--beige-warm) 100%);
+}
+
+/* Theme A: green left, beige right (diagonal from top-right to bottom-left-ish) */
+.pizza-row.theme-a .layer-beige {
+  clip-path: polygon(55% 0, 100% 0, 100% 100%, 45% 100%);
+}
+
+/* Theme B: beige left, green right */
+.pizza-row.theme-b .layer-beige {
+  clip-path: polygon(0 0, 50% 0, 60% 100%, 0 100%);
+}
+
+/* Theme C: green top, beige bottom (horizontal-ish split) */
+.pizza-row.theme-c .layer-beige {
+  clip-path: polygon(0 65%, 100% 55%, 100% 100%, 0 100%);
+}
+
+/* Theme D: beige top, green bottom */
+.pizza-row.theme-d .layer-beige {
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 35%);
+}
+
+/* Row content grid */
+.pizza-row__inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1300px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 2rem;
+  padding: 5rem 4rem;
+  min-height: 92vh;
+}
+
+/* When pizza is on the right, text is on the left, and vice versa */
+.pizza-row[data-side="right"] .pizza-text-block { grid-column: 1; grid-row: 1; justify-self: end; padding-right: 1rem; }
+.pizza-row[data-side="right"] .pizza-image-wrap { grid-column: 2; grid-row: 1; }
+
+.pizza-row[data-side="left"]  .pizza-text-block { grid-column: 2; grid-row: 1; justify-self: start; padding-left: 1rem; }
+.pizza-row[data-side="left"]  .pizza-image-wrap { grid-column: 1; grid-row: 1; }
+
+/* ── Pizza image ───────────────────────────────────────────────── */
+.pizza-image-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  aspect-ratio: 1 / 1;
+  justify-self: center;
+
+  /* Initial state — fade & shrink */
+  opacity: 0;
+  transform: scale(0.65) rotate(-8deg);
+  transition:
+    opacity 0.9s var(--ease-out),
+    transform 1.1s var(--ease-out);
+}
+
+.pizza-row.in-view .pizza-image-wrap {
+  opacity: 1;
+  transform: scale(1) rotate(var(--pizza-rotate, 0deg));
+}
+
+.pizza-row[data-side="right"] .pizza-image-wrap { --pizza-rotate: 6deg; }
+.pizza-row[data-side="left"]  .pizza-image-wrap { --pizza-rotate: -5deg; }
+
+.pizza-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+  filter: drop-shadow(0 18px 32px rgba(0, 0, 0, 0.35));
+  transition: transform 0.7s var(--ease-out);
+}
+
+.pizza-image-wrap:hover .pizza-image {
+  transform: scale(1.04) rotate(-2deg);
+}
+
+/* Subtle continuous bobble for visible pizzas */
+.pizza-row.in-view .pizza-image {
+  animation: pizzaBobble 6s ease-in-out infinite;
+}
+
+@keyframes pizzaBobble {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-8px); }
+}
+
+/* Image placeholder when no image is loaded */
+.pizza-image-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 40% 40%, #f0d18c 0%, #d9a44a 50%, #b27a2c 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 6rem;
+  filter: drop-shadow(0 18px 32px rgba(0, 0, 0, 0.35));
+  position: relative;
+}
+
+.pizza-image-placeholder::before {
+  content: '🍕';
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
+}
+
+/* ── Pizza text block ──────────────────────────────────────────── */
+.pizza-text-block {
+  max-width: 420px;
+  width: 100%;
+}
+
+/* Each child element animates separately with stagger */
+.pizza-text-block > * {
+  opacity: 0;
+  transition:
+    opacity 0.7s var(--ease-out),
+    transform 0.7s var(--ease-out);
+}
+
+/* Text slides FROM the pizza (the opposite side) */
+.pizza-row[data-side="right"] .pizza-text-block > * {
+  transform: translateX(60px);
+}
+
+.pizza-row[data-side="left"] .pizza-text-block > * {
+  transform: translateX(-60px);
+}
+
+.pizza-row.in-view .pizza-text-block > * {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.pizza-row.in-view .pizza-text-block > *:nth-child(1) { transition-delay: 0.15s; }
+.pizza-row.in-view .pizza-text-block > *:nth-child(2) { transition-delay: 0.25s; }
+.pizza-row.in-view .pizza-text-block > *:nth-child(3) { transition-delay: 0.35s; }
+.pizza-row.in-view .pizza-text-block > *:nth-child(4) { transition-delay: 0.45s; }
+.pizza-row.in-view .pizza-text-block > *:nth-child(5) { transition-delay: 0.55s; }
+
+/* Pizza name */
+.pizza-name-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.pizza-name {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4vw, 3.1rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}
+
+.pizza-name-line {
+  flex: 1;
+  height: 1.5px;
+  background: currentColor;
+  opacity: 0.55;
+  min-width: 30px;
+  max-width: 110px;
+}
+
+/* On green theme, names are cream; on beige theme, dark green */
+.pizza-row.bg-green .pizza-name,
+.pizza-row.bg-green .pizza-text-block { color: var(--text-cream); }
+
+.pizza-row.bg-beige .pizza-name,
+.pizza-row.bg-beige .pizza-text-block { color: var(--text-warm); }
+
+/* Badge */
+.pizza-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0.4em 0.95em;
+  border-radius: 2px;
+  border: 1px solid var(--badge-edge);
+  background: var(--badge-fill);
+  color: var(--badge-text);
+  margin-bottom: 1.2rem;
+  font-weight: 600;
+}
+
+.pizza-row.bg-green .pizza-badge {
+  background: rgba(217, 196, 163, 0.18);
+  border-color: rgba(217, 196, 163, 0.4);
+  color: var(--beige-light);
+}
+
+/* Description */
+.pizza-desc {
+  font-size: 0.92rem;
+  line-height: 1.65;
+  margin-bottom: 1.6rem;
+  opacity: 0.88;
+  max-width: 380px;
+}
+
+.pizza-row.bg-green .pizza-desc { color: rgba(243, 233, 210, 0.78); }
+
+/* Sizes */
+.sizes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.size-line {
+  display: flex;
+  align-items: baseline;
+  gap: 1.6rem;
+  padding: 0.15rem 0;
+  transition: transform 0.25s ease, color 0.25s ease;
+  cursor: default;
+}
+
+.size-line:hover {
+  transform: translateX(4px);
+}
+
+.size-label {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-style: italic;
+  min-width: 60px;
+  opacity: 0.7;
+}
+
+.size-price {
+  font-family: var(--font-serif);
+  font-size: 1.55rem;
+  font-weight: 600;
+  color: var(--text-warm);
+  transition: color 0.25s ease;
+}
+
+.pizza-row.bg-green .size-price { color: var(--cream); }
+
+.size-line:hover .size-price { color: var(--accent); }
+.pizza-row.bg-green .size-line:hover .size-price { color: var(--accent-soft); }
+
+.size-currency {
+  font-size: 0.85em;
+  opacity: 0.75;
+  margin-left: 2px;
+}
+
+/* ── Decorative herbs/chillies per row ─────────────────────────── */
+.row-decor {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+.row-decor.rosemary-tl { top: 6%; left: 3%;  width: 110px; transform: rotate(-15deg); }
+.row-decor.rosemary-br { bottom: 8%; right: 5%; width: 100px; transform: rotate(28deg) scaleX(-1); opacity: 0.45; }
+.row-decor.chili-1     { top: 18%; right: 8%; width: 55px; transform: rotate(20deg); opacity: 0.85; }
+.row-decor.chili-2     { bottom: 14%; left: 8%; width: 50px; transform: rotate(-30deg); opacity: 0.8; }
+.row-decor.peppercorns { top: 50%; right: 14%; width: 90px; opacity: 0.5; }
+.row-decor.thyme       { bottom: 18%; left: 12%; width: 90px; transform: rotate(15deg); opacity: 0.5; }
+
+/* ── Section divider ornament ──────────────────────────────────── */
+.section-divider {
+  position: relative;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  flex: 1;
+  max-width: 120px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.4;
+  margin: 0 1rem;
+}
+
+.section-divider span {
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+/* ── Footer ────────────────────────────────────────────────────── */
+.footer {
+  position: relative;
+  z-index: 2;
+  background: var(--green-shadow);
+  color: var(--beige);
+  text-align: center;
+  padding: 4rem 2rem 3rem;
+}
+
+.footer-title {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-style: italic;
+  color: var(--cream);
+  margin-bottom: 0.5rem;
+}
+
+.footer-sub {
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.footer-rule {
+  width: 50px;
+  height: 1px;
+  background: var(--beige);
+  margin: 1.2rem auto;
+  opacity: 0.5;
+}
+
+/* ── Loading state ─────────────────────────────────────────────── */
+.loading {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cream);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.2rem;
+  opacity: 0.7;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse { 50% { opacity: 0.3; } }
+
+/* ── Mobile ────────────────────────────────────────────────────── */
+@media (max-width: 850px) {
+  .pizza-row__inner {
+    grid-template-columns: 1fr;
+    padding: 4rem 1.5rem;
+    gap: 2rem;
+    min-height: auto;
+  }
+
+  .pizza-row { min-height: auto; padding: 2rem 0; }
+
+  .pizza-row[data-side="right"] .pizza-text-block,
+  .pizza-row[data-side="left"]  .pizza-text-block {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: center;
+    text-align: center;
+    padding: 0;
+  }
+
+  .pizza-row[data-side="right"] .pizza-image-wrap,
+  .pizza-row[data-side="left"]  .pizza-image-wrap {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .pizza-image-wrap { max-width: 320px; }
+
+  .pizza-name-row { justify-content: center; }
+  .pizza-name-line { max-width: 60px; }
+
+  .pizza-row[data-side="right"] .pizza-text-block > *,
+  .pizza-row[data-side="left"]  .pizza-text-block > * {
+    transform: translateY(40px);
+  }
+  .pizza-row.in-view .pizza-text-block > * {
+    transform: translateY(0);
+  }
+
+  /* Simplify backgrounds on mobile — keep alternating but vertical split */
+  .pizza-row.theme-a .layer-beige,
+  .pizza-row.theme-b .layer-beige,
+  .pizza-row.theme-c .layer-beige,
+  .pizza-row.theme-d .layer-beige {
+    clip-path: polygon(0 60%, 100% 50%, 100% 100%, 0 100%);
+  }
+
+  .row-decor.peppercorns,
+  .row-decor.thyme,
+  .row-decor.rosemary-br { display: none; }
+
+  .row-decor.rosemary-tl { width: 70px; opacity: 0.35; }
+  .row-decor.chili-1, .row-decor.chili-2 { width: 38px; opacity: 0.6; }
+}
+
+@media (max-width: 480px) {
+  .pizza-image-wrap { max-width: 260px; }
+  .pizza-name { font-size: 2rem; white-space: normal; }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ─────────────────────────────────────────────────────────── -->
+<!-- HERO                                                         -->
+<!-- ─────────────────────────────────────────────────────────── -->
+<header class="hero">
+  <!-- Decorative herbs -->
+  <svg class="hero-decor r1" viewBox="0 0 120 300" fill="none">
+    <line x1="60" y1="290" x2="60" y2="10" stroke="#a8c88a" stroke-width="3"/>
+    <ellipse cx="45" cy="260" rx="14" ry="6" fill="#a8c88a" transform="rotate(-20 45 260)"/>
+    <ellipse cx="72" cy="240" rx="14" ry="6" fill="#8db870" transform="rotate(20 72 240)"/>
+    <ellipse cx="44" cy="215" rx="14" ry="6" fill="#a8c88a" transform="rotate(-25 44 215)"/>
+    <ellipse cx="73" cy="192" rx="14" ry="6" fill="#8db870" transform="rotate(18 73 192)"/>
+    <ellipse cx="43" cy="168" rx="12" ry="5" fill="#a8c88a" transform="rotate(-22 43 168)"/>
+    <ellipse cx="72" cy="148" rx="12" ry="5" fill="#8db870" transform="rotate(15 72 148)"/>
+    <ellipse cx="50" cy="125" rx="10" ry="4" fill="#a8c88a" transform="rotate(-18 50 125)"/>
+    <ellipse cx="68" cy="108" rx="10" ry="4" fill="#8db870" transform="rotate(20 68 108)"/>
+    <ellipse cx="55" cy="90" rx="8" ry="3" fill="#a8c88a"/>
+    <ellipse cx="63" cy="70" rx="7" ry="3" fill="#8db870"/>
+  </svg>
+  <svg class="hero-decor r2" viewBox="0 0 120 300" fill="none">
+    <line x1="60" y1="290" x2="60" y2="10" stroke="#a8c88a" stroke-width="3"/>
+    <ellipse cx="45" cy="260" rx="14" ry="6" fill="#a8c88a" transform="rotate(-20 45 260)"/>
+    <ellipse cx="72" cy="240" rx="14" ry="6" fill="#8db870" transform="rotate(20 72 240)"/>
+    <ellipse cx="44" cy="215" rx="14" ry="6" fill="#a8c88a" transform="rotate(-25 44 215)"/>
+    <ellipse cx="73" cy="192" rx="14" ry="6" fill="#8db870" transform="rotate(18 73 192)"/>
+    <ellipse cx="43" cy="168" rx="12" ry="5" fill="#a8c88a" transform="rotate(-22 43 168)"/>
+  </svg>
+  <svg class="hero-decor r3" viewBox="0 0 60 140" fill="none">
+    <path d="M30 130 C20 110 18 80 25 60 C28 50 30 40 30 30" stroke="#5a8c2a" stroke-width="2.5" fill="none"/>
+    <path d="M25 60 C15 45 10 30 15 15 C18 8 26 5 30 10 C34 5 42 8 45 15 C50 30 45 45 35 60 C32 66 28 66 25 60Z" fill="#c8531f"/>
+    <path d="M30 10 C30 0 25 -5 22 -2" stroke="#5a8c2a" stroke-width="2.5"/>
+  </svg>
+
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Artisan Pizzeria</p>
+    <h1 class="hero-title">Pizza <em>Lkhorzza</em></h1>
+    <div class="hero-rule"></div>
+    <p class="hero-sub">Our Menu</p>
+    <p class="hero-tagline">Wood-fired · Hand-crafted · Always fresh</p>
+  </div>
+
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</header>
+
+<!-- ─────────────────────────────────────────────────────────── -->
+<!-- MENU                                                         -->
+<!-- ─────────────────────────────────────────────────────────── -->
+<main id="menu-container">
+  <div class="loading">Loading the menu…</div>
+</main>
+
+<footer class="footer">
+  <p class="footer-title">Pizza <em style="font-style:normal;color:var(--beige)">Lkhorzza</em></p>
+  <div class="footer-rule"></div>
+  <p class="footer-sub">Crafted with passion · © 2026</p>
+</footer>
+
+<!-- ─────────────────────────────────────────────────────────── -->
+<!-- SVG TEMPLATES (referenced by JS via <use>)                   -->
+<!-- ─────────────────────────────────────────────────────────── -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Rosemary -->
+    <symbol id="ic-rosemary" viewBox="0 0 120 300">
+      <line x1="60" y1="290" x2="60" y2="10" stroke="#7a9050" stroke-width="3"/>
+      <ellipse cx="45" cy="260" rx="14" ry="6" fill="#8aa860" transform="rotate(-20 45 260)"/>
+      <ellipse cx="72" cy="240" rx="14" ry="6" fill="#6d8848" transform="rotate(20 72 240)"/>
+      <ellipse cx="44" cy="215" rx="14" ry="6" fill="#8aa860" transform="rotate(-25 44 215)"/>
+      <ellipse cx="73" cy="192" rx="14" ry="6" fill="#6d8848" transform="rotate(18 73 192)"/>
+      <ellipse cx="43" cy="168" rx="12" ry="5" fill="#8aa860" transform="rotate(-22 43 168)"/>
+      <ellipse cx="72" cy="148" rx="12" ry="5" fill="#6d8848" transform="rotate(15 72 148)"/>
+      <ellipse cx="50" cy="125" rx="10" ry="4" fill="#8aa860" transform="rotate(-18 50 125)"/>
+      <ellipse cx="68" cy="108" rx="10" ry="4" fill="#6d8848" transform="rotate(20 68 108)"/>
+      <ellipse cx="55" cy="90" rx="8" ry="3" fill="#8aa860"/>
+      <ellipse cx="63" cy="70" rx="7" ry="3" fill="#6d8848"/>
+    </symbol>
+
+    <!-- Chili pepper -->
+    <symbol id="ic-chili" viewBox="0 0 60 140">
+      <path d="M30 130 C20 110 18 80 25 60 C28 50 30 40 30 30" stroke="#5a8c2a" stroke-width="2.5" fill="none"/>
+      <path d="M25 60 C15 45 10 30 15 15 C18 8 26 5 30 10 C34 5 42 8 45 15 C50 30 45 45 35 60 C32 66 28 66 25 60Z" fill="#c8531f"/>
+      <ellipse cx="27" cy="35" rx="3" ry="8" fill="rgba(255,150,80,0.4)" transform="rotate(-10 27 35)"/>
+      <path d="M30 10 C30 0 25 -5 22 -2" stroke="#5a8c2a" stroke-width="2.5" fill="none"/>
+    </symbol>
+
+    <!-- Thyme sprig (small leafy stem) -->
+    <symbol id="ic-thyme" viewBox="0 0 140 80">
+      <path d="M5 60 Q70 30 135 50" stroke="#7a9050" stroke-width="2" fill="none"/>
+      <circle cx="25" cy="55" r="4" fill="#8aa860"/>
+      <circle cx="40" cy="48" r="3.5" fill="#6d8848"/>
+      <circle cx="55" cy="44" r="4" fill="#8aa860"/>
+      <circle cx="70" cy="40" r="3.5" fill="#6d8848"/>
+      <circle cx="85" cy="42" r="4" fill="#8aa860"/>
+      <circle cx="100" cy="46" r="3.5" fill="#6d8848"/>
+      <circle cx="115" cy="49" r="3.5" fill="#8aa860"/>
+    </symbol>
+
+    <!-- Peppercorn cluster -->
+    <symbol id="ic-peppercorns" viewBox="0 0 100 100">
+      <circle cx="20" cy="30" r="6" fill="#3a2818"/>
+      <circle cx="35" cy="50" r="7" fill="#4a3220"/>
+      <circle cx="55" cy="35" r="6" fill="#3a2818"/>
+      <circle cx="70" cy="55" r="7" fill="#4a3220"/>
+      <circle cx="45" cy="70" r="6" fill="#3a2818"/>
+      <circle cx="25" cy="65" r="5" fill="#4a3220"/>
+      <circle cx="80" cy="40" r="5" fill="#3a2818"/>
+      <!-- highlights -->
+      <circle cx="18" cy="28" r="1.5" fill="rgba(255,255,255,0.3)"/>
+      <circle cx="33" cy="47" r="1.5" fill="rgba(255,255,255,0.3)"/>
+      <circle cx="53" cy="33" r="1.5" fill="rgba(255,255,255,0.3)"/>
+      <circle cx="68" cy="52" r="1.5" fill="rgba(255,255,255,0.3)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<script>
+/* ── Config ──────────────────────────────────────────────────── */
+const API = '/api/menu';
+const THEMES = ['theme-a', 'theme-c', 'theme-b', 'theme-d']; // cycle of bg variants
+const SIDES  = ['right', 'left']; // alternate pizza side
+const BG_TONE = ['bg-green', 'bg-beige']; // dominant tone for text color
+
+/* ── Helpers ─────────────────────────────────────────────────── */
+function imgSrc(filename) {
+  return filename ? `/shared/images/${filename}` : '';
+}
+
+function buildPizzaRow(pizza, index) {
+  const theme = THEMES[index % THEMES.length];
+  const side  = SIDES[index % SIDES.length];
+  // Beige rows: theme-c (green-top) shows beige at bottom → mostly green tone for top
+  // Simpler: alternate by index
+  const tone  = BG_TONE[index % BG_TONE.length];
+
+  const src = imgSrc(pizza.image);
+  const imageHTML = src
+    ? `<img class="pizza-image" src="${src}" alt="${pizza.name}" loading="lazy"
+            onerror="this.outerHTML='<div class=\\'pizza-image-placeholder\\'></div>'">`
+    : `<div class="pizza-image-placeholder"></div>`;
+
+  const sizesHTML = (pizza.sizes || []).map(s => `
+    <div class="size-line">
+      <span class="size-label">${s.size}</span>
+      <span class="size-price">${s.price}<span class="size-currency">.–</span></span>
+    </div>
+  `).join('');
+
+  const badgeHTML = pizza.badge && pizza.badge.trim()
+    ? `<span class="pizza-badge">${pizza.badge}</span>`
+    : '';
+
+  // Decorations — vary set per row for visual rhythm
+  const decorSet = index % 3;
+  let decorHTML = '';
+  if (decorSet === 0) {
+    decorHTML = `
+      <svg class="row-decor rosemary-tl" aria-hidden="true"><use href="#ic-rosemary"/></svg>
+      <svg class="row-decor chili-1"     aria-hidden="true"><use href="#ic-chili"/></svg>
+      <svg class="row-decor thyme"       aria-hidden="true"><use href="#ic-thyme"/></svg>
+    `;
+  } else if (decorSet === 1) {
+    decorHTML = `
+      <svg class="row-decor rosemary-br" aria-hidden="true"><use href="#ic-rosemary"/></svg>
+      <svg class="row-decor peppercorns" aria-hidden="true"><use href="#ic-peppercorns"/></svg>
+      <svg class="row-decor chili-2"     aria-hidden="true"><use href="#ic-chili"/></svg>
+    `;
+  } else {
+    decorHTML = `
+      <svg class="row-decor rosemary-tl" aria-hidden="true"><use href="#ic-rosemary"/></svg>
+      <svg class="row-decor rosemary-br" aria-hidden="true"><use href="#ic-rosemary"/></svg>
+      <svg class="row-decor chili-1"     aria-hidden="true"><use href="#ic-chili"/></svg>
+    `;
+  }
+
+  const row = document.createElement('section');
+  row.className = `pizza-row ${theme} ${tone}`;
+  row.dataset.side = side;
+  row.dataset.index = index;
+
+  row.innerHTML = `
+    <div class="pizza-row__bg">
+      <div class="layer-green"></div>
+      <div class="layer-beige"></div>
+    </div>
+    ${decorHTML}
+    <div class="pizza-row__inner">
+      <div class="pizza-image-wrap">
+        ${imageHTML}
+      </div>
+      <div class="pizza-text-block">
+        <div class="pizza-name-row">
+          <h2 class="pizza-name">${pizza.name}</h2>
+          <span class="pizza-name-line"></span>
+        </div>
+        ${badgeHTML}
+        <p class="pizza-desc">${pizza.description}</p>
+        <div class="sizes">${sizesHTML}</div>
+      </div>
+    </div>
+  `;
+
+  return row;
+}
+
+/* ── Bidirectional scroll animations ─────────────────────────── */
+function setupObserver(rows) {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      // Toggle — do NOT unobserve. This makes the animation
+      // play on enter AND reverse on exit, both directions.
+      entry.target.classList.toggle('in-view', entry.isIntersecting);
+    });
+  }, {
+    threshold: 0.22,
+    rootMargin: '0px 0px -8% 0px'
+  });
+
+  rows.forEach(r => observer.observe(r));
+}
+
+/* ── Load + render ───────────────────────────────────────────── */
+async function loadMenu() {
+  const container = document.getElementById('menu-container');
+  try {
+    const res = await fetch(API);
+    const pizzas = await res.json();
+    container.innerHTML = '';
+
+    pizzas.forEach((pizza, i) => {
+      const row = buildPizzaRow(pizza, i);
+      container.appendChild(row);
+    });
+
+    setupObserver(container.querySelectorAll('.pizza-row'));
+  } catch (err) {
+    container.innerHTML = `
+      <div class="loading" style="color:#c8531f">
+        Failed to load menu. Is the server running?
+      </div>`;
+    console.error(err);
+  }
+}
+
+loadMenu();
+</script>
+</body>
+</html>
